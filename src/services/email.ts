@@ -5,6 +5,11 @@ import CryptoJS from 'crypto-js';
 
 const SECRET_KEY = process.env.ENCRYPT as string;
 
+function isValidEmail(email: string): boolean {
+
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 export const signup = async (req: Request, res: Response) => {
     const { encrypted } = req.body;
     if (!encrypted) {
@@ -21,6 +26,9 @@ export const signup = async (req: Request, res: Response) => {
     }
     if (!email || !password) {
         return res.status(400).json({ message: 'Email and password are required.' });
+    }
+    if (!isValidEmail(email)) {
+        return res.status(400).json({ message: 'Invalid email format.' });
     }
     addUser({ email, password });
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
