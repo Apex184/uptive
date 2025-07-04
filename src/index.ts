@@ -6,7 +6,7 @@ import cors from 'cors';
 dotenv.config();
 
 const app = express();
-const allowedOrigins = ['http://localhost:5173', 'https://your-production-frontend.com'];
+const allowedOrigins = ['https://uptive.vercel.app'];
 app.use(cors({
     origin: allowedOrigins
 }));
